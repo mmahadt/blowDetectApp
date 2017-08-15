@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BlowingApp</string>
+    <string name="hello_world">When you blow in the MIC the below string will change.</string>
+    <string name="blow_status">Not blowing</string>
+</resources>
