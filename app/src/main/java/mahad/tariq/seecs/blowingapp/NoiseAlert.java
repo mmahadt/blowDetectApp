@@ -4,11 +4,15 @@ package mahad.tariq.seecs.blowingapp;
  * Created by seashell1 on 8/17/2017.
  */
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +20,8 @@ import android.widget.Toast;
 public class NoiseAlert extends Activity  {
     /* constants */
     private static final int POLL_INTERVAL = 300;
+
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
 
     /** running state **/
     private boolean mRunning = false;
@@ -34,7 +40,21 @@ public class NoiseAlert extends Activity  {
     /* data source */
     private SoundMeter mSensor;
 
+    // Requesting permission to RECORD_AUDIO
+    private boolean permissionToRecordAccepted = false;
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                break;
+        }
+        if (!permissionToRecordAccepted) finish();
+
+    }
 
     /****************** Define runnable thread again and again detect noise *********/
 
@@ -72,7 +92,7 @@ public class NoiseAlert extends Activity  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         // Defined SoundLevelView in main.xml file
         setContentView(R.layout.main);
         mStatusView = (TextView) findViewById(R.id.status);
